@@ -9,8 +9,13 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.text === 'get_exp_id') {
         const expViewerCnc = document.getElementsByClassName("zmags-viewer-container");
         let expIdCNC = null;
+        let groupIdCNC = null;
         if (expViewerCnc[0]) {
             expIdCNC = expViewerCnc[0].dataset.experience;
+            if(!expIdCNC) {
+                expIdCNC = null;
+                groupIdCNC = expViewerCnc[0].dataset.group;
+            }
         }
 
         let expIframeClassic = document.querySelectorAll(["iframe[id^='zmags_experience_']"]);
@@ -23,16 +28,27 @@ chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
         }
 
         console.log(`expIdCNC: ${expIdCNC}`);
+        console.log(`groupIdCNC: ${groupIdCNC}`);
         console.log(`expIdClassic: ${expIdClassic}`);
         if (expIdCNC) {
             sendResponse({
                 expId: expIdCNC,
-                viewer: 'cnc'
+                viewer: 'cnc',
+                type: 'experience'
             });
-        } else {
+        }
+        if (groupIdCNC) {
+            sendResponse({
+                expId: groupIdCNC,
+                viewer: 'cnc',
+                type: 'group'
+            });
+        }
+        else {
             sendResponse({
                 expId: expIdClassic,
-                viewer: 'classic'
+                viewer: 'classic',
+                type: 'experience'
             });
         }
     }
